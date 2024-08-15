@@ -1,39 +1,28 @@
 import mysql.connector
-from mysql.connector import Error
 
 class Database:
-    def __init__(self, host='localhost', database='etab_db', user='root', password='087907210769323928Ti@'):
-        try:
-            self.connection = mysql.connector.connect(
-                host=host,
-                database=database,
-                user=user,
-                password=password
-            )
-            if self.connection.is_connected():
-                print("Connexion à la base de données réussie")
-        except Error as e:
-            print(f"Erreur de connexion : {e}")
-            self.connection = None
+    def __init__(self):
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="087907210769323928Ti@",
+            database="etab_db"
+        )
+        self.cursor = self.conn.cursor()
 
-    def execute_query(self, query, data=None):
-        cursor = self.connection.cursor()
-        try:
-            cursor.execute(query, data)
-            self.connection.commit()
-        except Error as e:
-            print(f"Erreur lors de l'exécution de la requête : {e}")
+    def execute_query(self, query, params, fetch_lastrowid=False):
+        self.cursor.execute(query, params)
+        self.conn.commit()
+        if fetch_lastrowid:
+            return self.cursor.lastrowid
 
-    def fetch_query(self, query, data=None):
-        cursor = self.connection.cursor(dictionary=True)
-        try:
-            cursor.execute(query, data)
-            return cursor.fetchall()
-        except Error as e:
-            print(f"Erreur lors de la récupération des données : {e}")
-            return []
+    def get_lastrowid(self):
+        return self.cursor.lastrowid
+
+    def fetch_query(self, query, params=None):
+        self.cursor.execute(query, params or ())
+        return self.cursor.fetchall()
 
     def close(self):
-        if self.connection.is_connected():
-            self.connection.close()
-            print("Connexion fermée")
+        self.cursor.close()
+        self.conn.close()

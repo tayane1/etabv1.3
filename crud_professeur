@@ -1,0 +1,23 @@
+from abc import ABC, abstractmethod
+
+
+class CRUDProfesseur(ABC):
+    @abstractmethod
+    def ajouter(self, professeur):
+        pass
+
+    @abstractmethod
+    def modifier(self, professeur):
+        pass
+
+    @abstractmethod
+    def supprimer(self, identifiant: int):
+        pass
+
+    @abstractmethod
+    def obtenirProfesseur(self):
+        pass
+
+    @abstractmethod
+    def obtenir(self, identifiant: int):
+        pass
